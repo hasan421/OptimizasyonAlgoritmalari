@@ -1,6 +1,5 @@
 import random
 from random import randrange, uniform
-from typing import Text
 
 class PSO:
     def __init__(self,c1,c2,k,esik_degeri):
