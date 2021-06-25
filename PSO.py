@@ -1,72 +1,78 @@
 import random
 from random import randrange, uniform
 from typing import Text
-p_best=[]
-g_best=[]
-x1=[]
-x2=[]
-vi=[]
-uygunluk=[]
-c1=c2=2
-k=10
-temp=0
-t=0
-def first_throw():
 
-    for i in range(k):
-        x1.append(randrange(-5,5))
-        x2.append(randrange(-5,5))
-        Fx=4*pow(x1[i],2)-2.1*pow(x1[i],4)+1/3*pow(x1[i],6)+x1[i]*x2[i]-4*pow(x2[i],2)+4*pow(x2[i],4)
-        p_best.append([x1[i],x2[i],Fx])
-        uygunluk.append(Fx)
+class PSO:
+    def __init__(self,c1,c2,k,esik_degeri):
+        self.c1=c1
+        self.c2=c2
+        self.k=k
+        self.temp=0
+        self.t=0
+        self.x1=[]
+        self.x2=[]
+        self.p_best=[]
+        self.g_best=[]
+        self.uygunluk=[]
+        self.vi=[]
+        self.esik_degeri=esik_degeri
+    def first_throw(self):
+        for i in range(self.k):
+            self.x1.append(randrange(-5,5))
+            self.x2.append(randrange(-5,5))
+            Fx=4*pow(self.x1[i],2)-2.1*pow(self.x1[i],4)+1/3*pow(self.x1[i],6)+self.x1[i]*self.x2[i]-4*pow(self.x2[i],2)+4*pow(self.x2[i],4)
+            self.p_best.append([self.x1[i],self.x2[i],Fx])
+            self.uygunluk.append(Fx)
         
-first_throw()      
-temp=min(uygunluk)
-for i in range(k):
-    if(p_best[i][2]==temp):
-        g_best.append(p_best[i])
+        temp=min(self.uygunluk)
+        for i in range(self.k):
+            if(self.p_best[i][2]==temp):
+                self.g_best.append(self.p_best[i])
 
 
-def throw(vi):
-    for i in range(k):
-        x1[i]=x1[i]+vi[i][0]
-        x2[i]=x2[i]+vi[i][1]
-        Fx=4*pow(x1[i],2)-2.1*pow(x1[i],4)+1/3*pow(x1[i],6)+x1[i]*x2[i]-4*pow(x2[i],2)+4*pow(x2[i],4)
-        if(uygunluk[i]>=Fx):
-            p_best[i]=[x1[i],x2[i],Fx]
-            uygunluk[i]=Fx
-    temp=min(uygunluk)
+    def throw(self,vi):
+        for i in range(self.k):
+            self.x1[i]=self.x1[i]+self.vi[i][0]
+            self.x2[i]=self.x2[i]+vi[i][1]
+            Fx=4*pow(self.x1[i],2)-2.1*pow(self.x1[i],4)+1/3*pow(self.x1[i],6)+self.x1[i]*self.x2[i]-4*pow(self.x2[i],2)+4*pow(self.x2[i],4)
+            if(self.uygunluk[i]>=Fx):
+                self.p_best[i]=[self.x1[i],self.x2[i],Fx]
+                self.uygunluk[i]=Fx
+        temp=min(self.uygunluk)
 
-    for i in range(k):
-        if(p_best[i][2]==temp):
-            g_best[0]=p_best[i]
+        for i in range(self.k):
+            if(self.p_best[i][2]==temp):
 
+               self.g_best[0]=self.p_best[i]
 
-while(g_best[0][2]>=2):
+    def iteration(self):
+
+        while(self.g_best[0][2]>=self.esik_degeri):
     
-    for j in range(k):
+            for j in range(self.k):
        
-        rnd1=random.random()
-        rnd2=random.random()
-        if(t<=0):
-            v1=0+c1*rnd1*(p_best[j][0]-x1[j])+c2*rnd2*(g_best[0][0]-x1[j])
-            v2=0+c1*rnd1*(p_best[j][1]-x2[j])+c2*rnd2*(g_best[0][1]-x2[j])
-            vi.append([v1,v2])
+                rnd1=random.random()
+                rnd2=random.random()
+                if(self.t<=0):
+                    v1=0+self.c1*rnd1*(self.p_best[j][0]-self.x1[j])+self.c2*rnd2*(self.g_best[0][0]-self.x1[j])
+                    v2=0+self.c1*rnd1*(self.p_best[j][1]-self.x2[j])+self.c2*rnd2*(self.g_best[0][1]-self.x2[j])
+                    self.vi.append([v1,v2])
            
-        else:
-        
-            v1=vi[j][0]+c1*rnd1*(p_best[j][0]-x1[j])+c2*rnd2*(g_best[0][0]-x1[j])
-            v2=vi[j][1]+c1*rnd1*(p_best[j][1]-x2[j])+c2*rnd2*(g_best[0][1]-x2[j])
-            vi[i]=[v1,v2]
+                else:
+                    v1=self.vi[j][0]+self.c1*rnd1*(self.p_best[j][0]-self.x1[j])+self.c2*rnd2*(self.g_best[0][0]-self.x1[j])
+                    v2=self.vi[j][1]+self.c1*rnd1*(self.p_best[j][1]-self.x2[j])+self.c2*rnd2*(self.g_best[0][1]-self.x2[j])
+                    self.vi[j]=[v1,v2]
 
 
         
-    throw(vi)
-    t+=1
-print('İstenilen Değer',g_best[0])
+            self.throw(self.vi)
+            self.t+=1
+        print('İstenilen Değer',self.g_best[0])
 
         
-        
+optimizasyon=PSO(2,2,10,2)
+optimizasyon.first_throw()
+optimizasyon.iteration()       
 
 
 
